@@ -5,18 +5,29 @@ class CallbackDemo {
     // TODO implement callbacks
 
     fun fetchAndShowUser() {
+        fetchUser { user ->
+            showUser(user) {
+                removeUser(it){
+                    println("All done")
+                }
+            }
+        }
     }
 
-    fun fetchUser(): User {
-        return User("Marcin")
+    fun fetchUser(callback: (User) -> Unit): User {
+        val user = User("Marcin")
+        callback(user)
+        return user
     }
 
-    fun showUser(user: User,) {
+    fun showUser(user: User, callback: (User) -> Unit) {
         println(user)
+        callback(user)
     }
 
-    fun removeUser(user: User) {
+    fun removeUser(user: User,  callback: (User) -> Unit) {
         println("remove user : $user")
+        callback(user)
     }
 }
 
