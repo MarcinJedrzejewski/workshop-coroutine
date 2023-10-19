@@ -12,7 +12,17 @@ import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 suspend fun doWork(user: User) {
 
     // TODO implement continuation in suspend function
+    suspendCoroutineUninterceptedOrReturn { cont ->
+        val work = {
+            println("${Thread.currentThread()} | do some work for User: $user")
+            cont.resumeWith(Result.success(user))
+        }
+        workerPool.schedule(work, 5000, TimeUnit.MILLISECONDS)
+        COROUTINE_SUSPENDED
+    }
 }
+
+private val workerPool = Executors.newScheduledThreadPool(1)
 
 class SuspensionPointDemo3 {
 
