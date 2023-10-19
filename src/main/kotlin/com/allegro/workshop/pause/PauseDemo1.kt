@@ -1,6 +1,5 @@
 package com.allegro.workshop.pause
 
-
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
