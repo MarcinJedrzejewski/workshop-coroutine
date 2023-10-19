@@ -10,6 +10,34 @@ class ContinuationDemo2 {
     // TODO suspending functions (CPS applied)
 
     fun fetchAndShowUser(cont: Continuation<Any?>) {
+        class FetchAndShowUser(private val continuation: Continuation<Any?>) : Continuation<Any?> {
+            var label = 0
+            var res: Result<Any?>? = null
+
+            override fun resumeWith(result: Result<Any?>) {
+                this.res = result
+                fetchAndShowUser(this)
+                continuation.resumeWith(Result.success(Unit))
+            }
+
+            override val context: CoroutineContext = EmptyCoroutineContext
+        }
+
+        val localContinuation = if (cont is FetchAndShowUser) cont else FetchAndShowUser(cont)
+        when (localContinuation.label) {
+            0 -> {
+                localContinuation.label = 1
+                fetchUser(localContinuation)
+            }
+            1 -> {
+                localContinuation.label = 2
+                val user = localContinuation.res!!.getOrNull() as User
+                showUser(user, localContinuation)
+            }
+            else -> {
+                return
+            }
+        }
     }
 
     fun fetchUser(cont: Continuation<User?>): User {
@@ -37,9 +65,11 @@ class ContinuationDemo2 {
                 localContinuation.resumeWith(Result.success(user))
             }
             else -> {
-                return localContinuation.res.getOrThrow() as User
+                return localContinuation.res!!.getOrThrow() as User
             }
         }
+
+        return localContinuation.res?.getOrThrow() as User
     }
 
     fun showUser(user: User, cont: Continuation<User?>) {
@@ -73,5 +103,5 @@ class ContinuationDemo2 {
 
 fun main() {
 
-    // TODO  ContinuationDemo2().fetchAndShowUser(CompletionCallback())
+    ContinuationDemo2().fetchAndShowUser(CompletionCallback())
 }
