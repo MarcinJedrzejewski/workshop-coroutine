@@ -62,8 +62,17 @@ class ContinuationDemo1 {
     }
 }
 
+class CompletionCallback : Continuation<Any?> {
+
+    override fun resumeWith(result: Result<Any?>) {
+        println("we are done now: $result")
+    }
+    override val context: CoroutineContext = EmptyCoroutineContext
+
+}
 // TODO implement root continuation - CompleteContinuation
 
 fun main() {
-    // TODO run continuation
+    val cont = ContinuationDemo1.FetchAndShowUser(CompletionCallback())
+    cont.resumeWith(Result.success(Unit))
 }
