@@ -1,6 +1,7 @@
 package com.allegro.workshop.continuation
 
 import com.allegro.workshop.callback.User
+import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
 
 fun main() {
 
@@ -9,5 +10,7 @@ fun main() {
         return User("Marcin")
     }
 
-    // TODO Create and start the coroutine
+    val f = ::fetchUser
+    val cont = f.createCoroutineUnintercepted(CompletionCallback())
+    cont.resumeWith(Result.success(Unit))
 }
