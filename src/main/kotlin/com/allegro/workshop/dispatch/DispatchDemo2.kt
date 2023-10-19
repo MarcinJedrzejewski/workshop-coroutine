@@ -6,7 +6,6 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 private val workerPool = Executors.newScheduledThreadPool(1)
@@ -21,28 +20,15 @@ class DispatchDemo2 {
     // TODO copy SuspensionPointDemo2
 
     fun fetchAndShowUser(cont: Continuation<Any?>): Any {
-        class FetchAndShowUser(private val continuation: Continuation<Any?>) : Continuation<Any?> {
+        class FetchAndShowUser(continuation: Continuation<Any?>) : BaseContinuationImpl(continuation) {
             var label = 0
             var res: Result<Any?>? = null
-
             var user: User? = null
 
-            override fun resumeWith(result: Result<Any?>) {
-                this.res = result
-                val outcome = try {
-                    val r = fetchAndShowUser(this)
-                    if (r == COROUTINE_SUSPENDED) {
-                        return
-                    }
-                    Result.success(Unit)
-                } catch (e : Throwable) {
-                    Result.failure(e)
-                }
-
-                continuation.resumeWith(outcome)
+            override fun invokeSuspend(result: Result<Any?>): Any? {
+                res = result
+                return fetchAndShowUser(this)
             }
-
-            override val context: CoroutineContext = EmptyCoroutineContext
         }
 
         val localContinuation = if (cont is FetchAndShowUser) cont else FetchAndShowUser(cont)
@@ -78,29 +64,17 @@ class DispatchDemo2 {
         return Unit
     }
 
-    fun fetchUser(cont: Continuation<User?>): Any {
+    fun fetchUser(cont: Continuation<Any?>): Any {
 
-        class FetchUser(private val continuation: Continuation<User?>): Continuation<User?> {
+        class FetchUser(continuation: Continuation<Any?>): BaseContinuationImpl(continuation) {
 
             var label = 0
             var res: Result<Any?>? = null
 
-            override fun resumeWith(result: Result<User?>) {
+            override fun invokeSuspend(result: Result<Any?>): Any? {
                 res = result
-                val outcome = try {
-                    val r = fetchUser(this)
-                    if (r == COROUTINE_SUSPENDED) {
-                        return
-                    }
-                    Result.success(r as User)
-                } catch (e: Throwable) {
-                    Result.failure(e)
-                }
-
-                continuation.resumeWith(outcome)
+                return showUser(result.getOrNull()!! as User, this)
             }
-
-            override val context: CoroutineContext = EmptyCoroutineContext
         }
 
         val localContinuation = if (cont is FetchUser) cont else FetchUser(cont)
@@ -119,26 +93,15 @@ class DispatchDemo2 {
         return localContinuation.res?.getOrThrow() as User
     }
 
-    fun showUser(user: User, cont: Continuation<User?>): Any {
-        class ShowUser(private val continuation: Continuation<User?>): Continuation<User?> {
+    fun showUser(user: User, cont: Continuation<Any?>): Any {
+        class ShowUser(continuation: Continuation<Any?>): BaseContinuationImpl(continuation) {
             var label = 0
             var res: Result<Any?>? = null
 
-            override fun resumeWith(result: Result<User?>) {
+            override fun invokeSuspend(result: Result<Any?>): Any? {
                 res = result
-                val outcome = try {
-                    val r = showUser(result.getOrNull() as User, this)
-                    if (r == COROUTINE_SUSPENDED) {
-                        return
-                    }
-                    Result.success(null)
-                } catch (e : Throwable) {
-                    Result.failure(e)
-                }
-                continuation.resumeWith(outcome)
+                return showUser(result.getOrNull()!! as User, this)
             }
-
-            override val context: CoroutineContext = EmptyCoroutineContext
         }
 
         val localContinuation = if (cont is ShowUser) cont else ShowUser(cont)
@@ -157,26 +120,15 @@ class DispatchDemo2 {
         return Unit
     }
 
-    fun doWork(user: User, cont: Continuation<User?>): Any {
-        class DoWork(private val continuation: Continuation<User?>): Continuation<User?> {
+    fun doWork(user: User, cont: Continuation<Any?>): Any {
+        class DoWork(continuation: Continuation<Any?>): BaseContinuationImpl(continuation) {
             var label = 0
             var res: Result<Any?>? = null
 
-            override fun resumeWith(result: Result<User?>) {
+            override fun invokeSuspend(result: Result<Any?>): Any? {
                 res = result
-                val outcome = try {
-                    val r = doWork(result.getOrNull()!!, this)
-                    if (r == COROUTINE_SUSPENDED) {
-                        return
-                    }
-                    Result.success(null)
-                } catch (e: Throwable) {
-                    Result.failure(e)
-                }
-                continuation.resumeWith(outcome)
+                return doWork(result.getOrNull()!! as User, this)
             }
-
-            override val context: CoroutineContext = EmptyCoroutineContext
         }
 
         val localContinuation = if (cont is DoWork) cont else DoWork(cont)
@@ -203,6 +155,28 @@ class DispatchDemo2 {
 }
 
 // TODO create abstract base class BaseContinuationImpl for our continuations
+abstract class BaseContinuationImpl(private val continuation: Continuation<Any?>) : Continuation<Any?> {
+
+    override val context: CoroutineContext
+        get() = continuation.context
+
+    final override fun resumeWith(result: Result<Any?>) {
+        val res = result
+        val outcome = try {
+            val r = invokeSuspend(res)
+            if (r == COROUTINE_SUSPENDED) {
+                return
+            }
+            Result.success(null)
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+        continuation.resumeWith(outcome)
+    }
+
+    abstract fun invokeSuspend(result: Result<Any?>): Any?
+}
+
 
 // TODO create a new dispatcher and implement interface ContinuationInterceptor
 
