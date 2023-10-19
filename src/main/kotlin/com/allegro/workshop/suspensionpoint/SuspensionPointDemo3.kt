@@ -48,6 +48,15 @@ class SuspensionPointDemo3 {
 suspend fun main() {
     // TODO create new dispatcher from Executors.newScheduledThreadPool add ping task
 
+    val dispatcher = Executors.newScheduledThreadPool(1)
+    val ping = {
+        println("${Thread.currentThread()} | ping")
+    }
+    dispatcher.scheduleAtFixedRate(ping,1000, 1000, TimeUnit.MILLISECONDS)
+
+
     // TODO use withContext to change context
-    SuspensionPointDemo3().fetchAndShowUser()
+    withContext(dispatcher.asCoroutineDispatcher()) {
+        SuspensionPointDemo3().fetchAndShowUser()
+    }
 }
