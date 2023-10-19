@@ -25,7 +25,8 @@ class SuspensionPointDemo2 {
         class FetchAndShowUser(private val continuation: Continuation<Any?>) : Continuation<Any?> {
             var label = 0
             var res: Result<Any?>? = null
-            var completed = false
+
+            var user: User? = null
 
             override fun resumeWith(result: Result<Any?>) {
                 this.res = result
@@ -39,10 +40,7 @@ class SuspensionPointDemo2 {
                     Result.failure(e)
                 }
 
-                if (!completed) {
-                    continuation.resumeWith(outcome)
-                    completed = true
-                }
+                continuation.resumeWith(outcome)
             }
 
             override val context: CoroutineContext = EmptyCoroutineContext
@@ -60,6 +58,7 @@ class SuspensionPointDemo2 {
             1 -> {
                 localContinuation.label = 2
                 val user = localContinuation.res!!.getOrNull() as User
+                localContinuation.user = user
                 val res = doWork(user, localContinuation)
                 if (res == COROUTINE_SUSPENDED) {
                     return COROUTINE_SUSPENDED
@@ -67,7 +66,7 @@ class SuspensionPointDemo2 {
             }
             2 -> {
                 localContinuation.label = 3
-                val user = localContinuation.res!!.getOrNull() as User
+                val user = localContinuation.user!!
                 val res = showUser(user, localContinuation)
                 if (res == COROUTINE_SUSPENDED) {
                     return COROUTINE_SUSPENDED
@@ -204,9 +203,9 @@ class SuspensionPointDemo2 {
     }
 }
 
-private val workerPool = Executors.newScheduledThreadPool(1)
+private val workerPool = Executors.newScheduledThreadPool(2)
 
 fun main() {
     SuspensionPointDemo2().fetchAndShowUser(CompletionOrThrowCallback())
-    println("suspended")
+    println("${Thread.currentThread()} | suspended")
 }
