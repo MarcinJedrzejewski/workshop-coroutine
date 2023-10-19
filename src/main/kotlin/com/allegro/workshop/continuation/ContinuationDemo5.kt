@@ -125,7 +125,7 @@ class ContinuationDemo5 {
 // TODO implement CompletionOrThrowCallback
 class CompletionOrThrowCallback: Continuation<Any?>{
     override fun resumeWith(result: Result<Any?>) {
-        println("We are done now: $result")
+        println("${Thread.currentThread()} | We are done now: $result")
         result.getOrThrow()
     }
 

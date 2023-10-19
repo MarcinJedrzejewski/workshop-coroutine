@@ -8,9 +8,9 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
+import kotlin.coroutines.intrinsics.intercepted
 
 private val workerPool = Executors.newScheduledThreadPool(1)
-
 
 suspend fun doWork(user: User) {
 
@@ -19,7 +19,7 @@ suspend fun doWork(user: User) {
     suspendCoroutineUninterceptedOrReturn { cont ->
         val work = {
             println("${Thread.currentThread()} | do some work for User: $user")
-            cont.resumeWith(Result.success(user))
+            cont.intercepted().resumeWith(Result.success(user))
         }
         workerPool.schedule(work, 5000, TimeUnit.MILLISECONDS)
         COROUTINE_SUSPENDED
@@ -58,5 +58,4 @@ suspend fun main() {
     withContext(dispatcher.asCoroutineDispatcher()) {
         DispatchDemo1().fetchAndShowUser()
     }
-
 }
