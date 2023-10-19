@@ -25,7 +25,6 @@ class ContinuationDemo1 {
                 1 -> {
                     label = 2
                     user = res as User
-                    println(user)
                     ShowUser(this).resumeWith(Result.success(user))
                 }
                 2 -> {
