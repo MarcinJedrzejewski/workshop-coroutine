@@ -4,18 +4,45 @@ class CooperationDemo {
 
     // TODO change functions to make cooperate between them
 
-    fun functionA() {
-        taskA1()
-        taskA2()
-        taskA3()
-        taskA4()
+    fun functionA(label: Int) {
+        when (label) {
+            1 -> {
+                taskA1()
+                functionB(1)
+            }
+            2 -> {
+                taskA2()
+                functionB(2)
+            }
+            3 -> {
+                taskA3()
+                functionB(3)
+            }
+            4 -> {
+                taskA4()
+                functionB(4)
+            }
+        }
     }
 
-    fun functionB() {
-        taskB1()
-        taskB2()
-        taskB3()
-        taskB4()
+    fun functionB(label: Int) {
+        when(label) {
+            1 -> {
+                taskB1()
+                functionA(2)
+            }
+            2 -> {
+                taskB2()
+                functionA(3)
+            }
+            3-> {
+                taskB3()
+                functionA(4)
+            }
+            4 -> {
+                taskB4()
+            }
+        }
     }
 
     private fun taskA1() { println("Task A1") }
@@ -31,6 +58,5 @@ class CooperationDemo {
 
 fun main() {
     val demo = CooperationDemo()
-    demo.functionA()
-    demo.functionB()
+    demo.functionA(1)
 }
