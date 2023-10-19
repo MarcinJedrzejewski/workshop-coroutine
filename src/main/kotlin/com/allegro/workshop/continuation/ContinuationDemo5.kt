@@ -112,7 +112,6 @@ class ContinuationDemo5 {
         when (localContinuation.label) {
             0 -> {
                 localContinuation.label = 1
-                throw IllegalStateException("Errr!!!")
                 println(user)
                 localContinuation.resumeWith(Result.success(user))
             }
