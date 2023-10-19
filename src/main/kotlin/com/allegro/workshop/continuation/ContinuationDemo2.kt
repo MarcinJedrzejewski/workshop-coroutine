@@ -13,11 +13,15 @@ class ContinuationDemo2 {
         class FetchAndShowUser(private val continuation: Continuation<Any?>) : Continuation<Any?> {
             var label = 0
             var res: Result<Any?>? = null
+            var completed = false
 
             override fun resumeWith(result: Result<Any?>) {
                 this.res = result
                 fetchAndShowUser(this)
-                continuation.resumeWith(Result.success(Unit))
+                if (!completed) {
+                    continuation.resumeWith(Result.success(Unit))
+                    completed = true
+                }
             }
 
             override val context: CoroutineContext = EmptyCoroutineContext
