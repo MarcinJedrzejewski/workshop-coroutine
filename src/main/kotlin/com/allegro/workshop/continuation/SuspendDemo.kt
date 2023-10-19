@@ -5,6 +5,7 @@ import com.allegro.workshop.callback.User
 class SuspendDemo {
     suspend fun fetchAndShowUser() {
         val user = fetchUser()
+        println(user)
         showUser(user)
     }
 
