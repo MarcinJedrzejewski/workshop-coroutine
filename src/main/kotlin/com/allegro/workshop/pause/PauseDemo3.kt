@@ -5,10 +5,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 suspend fun test3() = coroutineScope {
-    val job = launch {
+    val job = launchPausing {
 
         // TODO set NonPausing in context
-        launch {
+        launch(NonPausing) {
             var count = 0
             repeat(10) {
                 delay(1000)
@@ -28,6 +28,10 @@ suspend fun test3() = coroutineScope {
     }
 
     delay(3000)
+    job.pause()
+
+    delay(3000)
+    job.resume()
 }
 
 suspend fun main() {
