@@ -1,6 +1,5 @@
 package com.allegro.workshop.job
 
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -8,7 +7,7 @@ import kotlinx.coroutines.launch
 private suspend fun longTask() = coroutineScope {
     launch {
         delay(1000)
-        // TODO throw Error()
+        throw IllegalStateException()
     }
     launch {
         delay(2000)

@@ -9,7 +9,7 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-val scope = CoroutineScope(Dispatchers.IO)
+private val scope = CoroutineScope(Dispatchers.IO)
 
 fun main() {
     runBlocking {

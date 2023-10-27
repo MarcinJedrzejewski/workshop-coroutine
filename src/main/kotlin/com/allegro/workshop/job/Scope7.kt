@@ -10,7 +10,7 @@ private suspend fun longTask() {
     val scope = CoroutineScope(Job())
     val def1 = scope.async {
         delay(1000)
-        // TODO throw Error()
+        throw IllegalStateException()
     }
     val def2 = scope.async {
         delay(2000)
@@ -21,7 +21,11 @@ private suspend fun longTask() {
         println("Done3")
     }
 
-    listOf(def1, def2, def3).awaitAll()
+    try {
+        listOf(def1, def2, def3).awaitAll()
+    } catch (e: Exception) {
+        println("!!! $e")
+    }
 }
 
 suspend fun main() {
