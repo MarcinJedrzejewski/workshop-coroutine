@@ -15,7 +15,7 @@ class PausingDispatchQueue : PausingHandle {
         get() = paused.get()
 
     override fun pause() {
-        paused.set(false)
+        paused.set(true)
     }
 
     override fun resume() {

@@ -1,6 +1,7 @@
 package com.allegro.workshop.pause
 
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Runnable
 import kotlin.coroutines.CoroutineContext
 
@@ -15,6 +16,15 @@ class PausingDispatcher(
             queue.queue(context, block, baseDispatcher)
         } else {
             baseDispatcher.dispatch(context, block)
+        }
+    }
+
+    @InternalCoroutinesApi
+    override fun dispatchYield(context: CoroutineContext, block: Runnable) {
+        if (isPaused(context)) {
+            queue.queue(context, block, baseDispatcher)
+        } else {
+            baseDispatcher.dispatchYield(context, block)
         }
     }
 
