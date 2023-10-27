@@ -26,5 +26,15 @@ fun main() {
         }
 
         // TODO check structure
+        val parentJob = scope.coroutineContext.job
+        println(job == parentJob)
+        println(parentJob)
+        println(job)
+        val parentChildren = parentJob.children
+        println(parentChildren.first() == job)
+
+        println(parentJob.children.count())
+
+        println(job.children.count())
     }
 }
