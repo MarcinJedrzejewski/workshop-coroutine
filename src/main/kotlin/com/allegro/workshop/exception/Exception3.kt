@@ -5,18 +5,21 @@ import kotlinx.coroutines.*
 fun main() = runBlocking {
 
     val handler = CoroutineExceptionHandler { _, exception ->
-        println("CoroutineExceptionHandler got $exception")
+        //println("CoroutineExceptionHandler got $exception")
+
+        println("CoroutineExceptionHandler got $exception, supressed ${exception.suppressed.contentToString()}}")
     }
 
     val job = GlobalScope.launch(handler) {
         launch { // the first child
             try {
-                delay(Long.MAX_VALUE)
+                delay(2000)
             } finally {
                 // TODO throw exception, which wins?
                 withContext(NonCancellable) {
                     println("Children are cancelled, but exception is not handled until all children terminate")
-                    delay(5000)
+                    //delay(5000)
+                    throw IllegalStateException()
                     println("The first child finished its non cancellable block")
                 }
             }

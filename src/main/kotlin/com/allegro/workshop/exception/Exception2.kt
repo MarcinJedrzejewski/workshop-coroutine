@@ -17,7 +17,7 @@ fun main() {
         }
 
         //TODO set SupervisorJob
-        val parentScope = CoroutineScope(Job() + Dispatchers.IO )
+        val parentScope = CoroutineScope(Job() + Dispatchers.IO + coroutineExceptionHandler)
 
         val job1 = parentScope.launch {
             delay(150)
@@ -28,8 +28,15 @@ fun main() {
         }
 
         val deferred = parentScope.async {
-            delay(100)
+            delay(400)
             // TODO throw exception
+            throw Exception("Something went wrong")
+        }
+
+        try {
+            deferred.await()
+        } catch (e: Exception) {
+            println("catch: $e")
         }
 
         delay(300)

@@ -15,10 +15,11 @@ fun main() = runBlocking {
         val inner1 = launch { // all this stack of coroutines will get cancelled
             launch {
                 // TODO how dont propagate exception
-                launch {
-                    throw IOException()
-                } // the original exception
-
+                supervisorScope {
+                    launch {
+                        throw IOException()
+                    } // the original exception
+                }
                 delay(1000)
                 println("end")
            }

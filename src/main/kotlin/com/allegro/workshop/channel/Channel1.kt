@@ -4,6 +4,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.yield
 
 fun main() {
     runBlocking {
@@ -27,8 +28,7 @@ fun main() {
             // iterate over the channel until it's closed
             for (value in channel) {
                 log("Consumer Received $value", startTime)
-                delay(500)
-                channel.send(2)
+                yield()
             }
         }
     }

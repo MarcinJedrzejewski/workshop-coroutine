@@ -7,6 +7,7 @@ import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.function.Predicate
 
 fun main() {
     runBlocking {
@@ -19,8 +20,10 @@ suspend fun streamingNumbers() = coroutineScope {
         val numbers = produceNumbers(4)
 
         // Filtering out even numbers
+        val filtered = filter(numbers) { it % 2 == 0}
 
         // Squaring the remaining odd numbers
+        val sum = map(filtered) { it + it}
 
         // Summing them up
 
@@ -34,3 +37,11 @@ fun CoroutineScope.produceNumbers(count: Int): ReceiveChannel<Int> = produce {
 }
 
 // TODO implement operators in pipeline
+fun CoroutineScope.filter(
+    channel: ReceiveChannel<Int>,
+    predicate: (Int) -> Boolean
+): ReceiveChannel<Int> = produce {
+    channel.consumeEach {
+        if (predicate(it)) send(it)
+    }
+}

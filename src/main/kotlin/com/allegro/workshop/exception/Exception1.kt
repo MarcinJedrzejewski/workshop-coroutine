@@ -13,13 +13,13 @@ fun main() {
 
         // TODO async
         try {
-            val job = scope.launch {
+            val job = scope.async {
                 println("${Thread.currentThread()} | launch")
                 delay(1000)
                 println("${Thread.currentThread()} | throw exception")
                 throw SomeException() // some exception is thrown by a lower layer
             }
-            job.join()
+            job.await()
         } catch (e: SomeException) {
             println("${Thread.currentThread()} | Catch exception: $e")
         }
