@@ -4,6 +4,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 
 var counter = 0
 
@@ -17,11 +18,15 @@ fun main() {
         repeat(10000) {
             launch {
                 //TODO leak resources
-                val resource = withTimeout(60) {
-                    delay(50)
-                    Resource()
+                var resource: Resource? = null
+                try {
+                    withTimeout(60) {
+                        delay(50)
+                        resource = Resource()
+                    }
+                } finally {
+                    resource?.close()
                 }
-                resource.close() // Release the resource
             }
         }
     }

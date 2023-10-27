@@ -12,8 +12,13 @@ fun main() {
         val job = launch(Dispatchers.Default) {
             repeat(5) { i ->
                 // TODO add catch
-                println("sleep $i ...")
-                delay(500)
+                try {
+                    println("sleep $i ...")
+                    delay(500)
+                } catch (e: CancellationException) {
+                    println("!!! $e")
+                    throw e
+                }
             }
         }
 

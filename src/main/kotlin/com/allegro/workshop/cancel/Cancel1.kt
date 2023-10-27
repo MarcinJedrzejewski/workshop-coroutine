@@ -6,6 +6,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -14,10 +15,11 @@ fun main() = runBlocking {
     val parentScope = CoroutineScope(Job() + Dispatchers.IO)
 
     val job1 = parentScope.launch {
-        delay(50)
+        delay(150)
     }
 
     val job2 = parentScope.launch {
+        delay(200)
     }
 
     val deferred = parentScope.async {
