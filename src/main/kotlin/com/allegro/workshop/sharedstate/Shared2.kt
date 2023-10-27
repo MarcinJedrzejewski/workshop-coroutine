@@ -41,7 +41,7 @@ fun main() {
         actor.send(GetCounter(response))
 
         println("Counter = ${response.await()}")
-        
+
         // shutdown the actor
         actor.close()
     }
