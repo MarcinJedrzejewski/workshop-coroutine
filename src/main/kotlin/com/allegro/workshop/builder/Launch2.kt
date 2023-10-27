@@ -12,6 +12,7 @@ fun main() {
             longRunningTask()  // calling the long running function
         }
 
+        longRunningTask()
         println("${Thread.currentThread()} | End launch")
     }
     println("${Thread.currentThread()} | End")

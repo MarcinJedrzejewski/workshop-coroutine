@@ -4,7 +4,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 fun main() {
-    runBlocking{
+    runBlocking {
         println("${Thread.currentThread()} | Start")
 
         longRunningTask()

@@ -9,10 +9,11 @@ fun main() {
     runBlocking {
         println("${Thread.currentThread()} | Start")
 
-        launch(start = CoroutineStart.LAZY) {
+        val job = launch(start = CoroutineStart.LAZY) {
             longRunningTask()
         }
 
+        job.join()
         println("${Thread.currentThread()} | End launch")
     }
     println("${Thread.currentThread()} | End")
