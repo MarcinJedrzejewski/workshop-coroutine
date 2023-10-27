@@ -26,8 +26,11 @@ suspend fun streamingNumbers() = coroutineScope {
         val sum = map(filtered) { it + it}
 
         // Summing them up
+        val res = reduce(sum) { acc, x -> acc + x }
 
-        //println(sum)
+        res.consumeEach {
+            println(it)
+        }
     }
 }
 
@@ -44,4 +47,23 @@ fun CoroutineScope.filter(
     channel.consumeEach {
         if (predicate(it)) send(it)
     }
+}
+
+fun CoroutineScope.map(
+    channel: ReceiveChannel<Int>,
+    mapFunction: (Int) -> Int
+) = produce {
+    channel.consumeEach {
+        send(mapFunction(it))
+    }
+}
+
+fun CoroutineScope.reduce(
+    channel: ReceiveChannel<Int>, accFunction: (Int, Int) -> Int
+) = produce {
+    var res = 0
+    channel.consumeEach {
+        res = accFunction(res , it)
+    }
+    send(res)
 }
