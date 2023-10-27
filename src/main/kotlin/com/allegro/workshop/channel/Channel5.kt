@@ -9,6 +9,8 @@ fun main() = runBlocking {
     repeat(5) { launchProcessor(it, receiveChannel) }
 
     delay(950)
+
+    println("Cancel")
     receiveChannel.cancel() // cancel producer coroutine and thus kill them all
 }
 
