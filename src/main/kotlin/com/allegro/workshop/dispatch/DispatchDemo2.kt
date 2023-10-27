@@ -118,8 +118,7 @@ class DispatchDemo2 {
         when (localContinuation.label) {
             0 -> {
                 localContinuation.label = 1
-                println("${Thread.currentThread()} | println user")
-                println(user)
+                println("${Thread.currentThread()} | println $user")
                 localContinuation.resumeWith(Result.success(user))
             }
             else -> {
@@ -244,7 +243,7 @@ class ScopeCoroutine(ctx: CoroutineContext): BaseContinuationImpl(CompletionOrTh
 
 class CompletionOrThrowCallback(ctx: CoroutineContext): Continuation<Any?>{
     override fun resumeWith(result: Result<Any?>) {
-        println("${Thread.currentThread()} We are done now: $result")
+        println("${Thread.currentThread()} | We are done now: $result")
         result.getOrThrow()
     }
 

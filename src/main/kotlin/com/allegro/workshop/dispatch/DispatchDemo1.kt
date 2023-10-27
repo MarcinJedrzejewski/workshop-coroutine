@@ -3,6 +3,7 @@ package com.allegro.workshop.dispatch
 import com.allegro.workshop.callback.User
 import com.allegro.workshop.suspensionpoint.SuspensionPointDemo3
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
